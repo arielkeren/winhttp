@@ -31,7 +31,7 @@ HttpClient::~HttpClient() {
     }
 }
 
-void HttpClient::connect(const std::string& host, int port) {
+void HttpClient::connect(const std::string& host, unsigned short port) {
     if (sock == INVALID_SOCKET) {
         throw std::runtime_error("Socket is not initialized");
     }
