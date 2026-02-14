@@ -17,5 +17,5 @@ class HttpClient {
     HttpResponse receive() const;
 
    private:
-    SOCKET sock;
+    SOCKET m_socket;
 };

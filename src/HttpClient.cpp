@@ -12,27 +12,27 @@ constexpr size_t BUFFER_SIZE = 4096;
 constexpr unsigned char WINSOCK_MAJOR = 2;
 constexpr unsigned char WINSOCK_MINOR = 2;
 
-HttpClient::HttpClient() : sock(INVALID_SOCKET) {
+HttpClient::HttpClient() : m_socket(INVALID_SOCKET) {
     WSADATA wsa;
     if (WSAStartup(MAKEWORD(WINSOCK_MAJOR, WINSOCK_MINOR), &wsa)) {
         throw std::runtime_error("WSAStartup failed");
     }
 
-    sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-    if (sock == INVALID_SOCKET) {
+    m_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    if (m_socket == INVALID_SOCKET) {
         throw std::runtime_error("Failed to create socket");
     }
 }
 
 HttpClient::~HttpClient() {
-    if (sock != INVALID_SOCKET) {
-        closesocket(sock);
+    if (m_socket != INVALID_SOCKET) {
+        closesocket(m_socket);
         WSACleanup();
     }
 }
 
 void HttpClient::connect(const std::string& host, unsigned short port) {
-    if (sock == INVALID_SOCKET) {
+    if (m_socket == INVALID_SOCKET) {
         throw std::runtime_error("Socket is not initialized");
     }
 
@@ -44,14 +44,15 @@ void HttpClient::connect(const std::string& host, unsigned short port) {
         throw std::runtime_error("Invalid address");
     }
 
-    if (::connect(sock, (sockaddr*)&server, sizeof(server)) == SOCKET_ERROR) {
+    if (::connect(m_socket, (sockaddr*)&server, sizeof(server)) ==
+        SOCKET_ERROR) {
         throw std::runtime_error("Failed to connect to server");
     }
 }
 
 void HttpClient::send(const HttpRequest& request) const {
     std::string raw_request = request.to_string();
-    ::send(sock, raw_request.c_str(), raw_request.size(), 0);
+    ::send(m_socket, raw_request.c_str(), raw_request.size(), 0);
 }
 
 HttpResponse HttpClient::receive() const {
@@ -59,7 +60,7 @@ HttpResponse HttpClient::receive() const {
     char buffer[BUFFER_SIZE];
 
     while (true) {
-        int bytes = recv(sock, buffer, sizeof(buffer), 0);
+        int bytes = recv(m_socket, buffer, sizeof(buffer), 0);
         if (bytes < 0) {
             throw std::runtime_error("Failed to receive response");
         }
