@@ -5,14 +5,14 @@ LDFLAGS = -lws2_32
 SOURCES = $(wildcard src/*.cpp src/**/*.cpp)
 OBJECTS = $(SOURCES:.cpp=.o)
 
-winweb: $(OBJECTS)
-	$(CXX) $(CXXFLAGS) $(OBJECTS) -o winweb $(LDFLAGS)
+winhttp: $(OBJECTS)
+	$(CXX) $(CXXFLAGS) $(OBJECTS) -o winhttp $(LDFLAGS)
 
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	if exist winweb.exe del winweb.exe
+	if exist winhttp.exe del winhttp.exe
 	if exist src\*.o del src\*.o
 
 .PHONY: clean
