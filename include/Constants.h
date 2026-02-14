@@ -1,3 +1,6 @@
+/// @file Constants.h
+/// @brief HTTP parsing/formatting constants shared across the project.
+
 #pragma once
 
 #include <string_view>
