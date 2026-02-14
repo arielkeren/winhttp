@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include "Constants.h"
+
 HttpRequest& HttpRequest::method(const std::string& method) {
     m_method = method;
     return *this;
@@ -29,13 +31,19 @@ HttpRequest& HttpRequest::body(const std::string& body) {
 }
 
 std::string HttpRequest::to_string() const {
-    std::string request = m_method + " " + m_uri + " " + m_version + "\r\n";
+    std::string request = m_method + STATUS_LINE_SEPARATOR + m_uri +
+                          STATUS_LINE_SEPARATOR + m_version;
+    request += HEADER_SEPARATOR;
 
     for (const auto& header : m_headers) {
-        request += header.first + ": " + header.second + "\r\n";
+        request += header.first;
+        request += HEADER_KEY_VALUE_SEPARATOR;
+        request += header.second;
+        request += HEADER_SEPARATOR;
     }
 
-    request += "\r\n" + m_body;
+    request += HEADER_SEPARATOR;
+    request += m_body;
 
     return request;
 }
